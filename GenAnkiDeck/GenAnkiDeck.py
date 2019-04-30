@@ -43,6 +43,8 @@ def getModel():
             'afmt': afmtString,
         },
     ]
+    # call styling info
+    styling = getStyling()
 
     # open / write / close the text file opened earlier
     textFile = open("anki_info.txt", "a")
@@ -55,25 +57,32 @@ def getModel():
     textFile.close()
 
     # create and return model
-    model = genanki.Model(id, name, fields, templates)
+    model = genanki.Model(id, name, fields, templates, styling)
     return(model)
+
+# asks user for css styling input
+def getStyling():
+    fontSize = input("Please enter font size (e.g. 24px): ")
+    textAlign = input("Please enter text alignment (left, center, or right): ")
+    css = ".card { font-size: " + fontSize + ";\n" + "text-align: " + textAlign + " }"
+    return(css)
 
 # read data from spreadsheet
 def readWriteData(deck, model):
-    filename = "list_02.xls"
+    filename = "list_01.xls"
     book = xlrd.open_workbook(filename)
     sheet = book.sheet_by_index(0)
     for i in range(sheet.nrows):
         fields = []
         for j in range(sheet.ncols):
             print(sheet.cell_value(i, j))
-            fields.append(sheet.cell_value(i, j) + "\n")
+            fields.append(sheet.cell_value(i, j) + "<br/><br/>")
         note = genanki.Note(model, fields)
         deck.add_note(note)
         print()
     genanki.Package(deck).write_to_file('output.apkg')
     
-
+# main
 def main():
     my_deck = getDeck()
     my_model = getModel()
