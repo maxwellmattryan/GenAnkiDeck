@@ -1,6 +1,7 @@
 # libraries
-import genanki
 import random
+import genanki
+import xlrd
 
 # get deck information and create
 def getDeck():
@@ -27,7 +28,7 @@ def getModel():
     id = random.randrange(1 << 30, 1 << 31)
 
     # name input
-    name = input("Please enter a model name: ").strip()
+    name = input("Please enter a model name (note type): ").strip()
 
     # field and template input and handling
     fieldInput = input("Please enter fields (separated by spaces): ").strip().split(" ")
@@ -58,12 +59,24 @@ def getModel():
     return(model)
 
 # read data from spreadsheet
-def readData():
-
-    return()
+def readWriteData(deck, model):
+    filename = "list_02.xls"
+    book = xlrd.open_workbook(filename)
+    sheet = book.sheet_by_index(0)
+    for i in range(sheet.nrows):
+        fields = []
+        for j in range(sheet.ncols):
+            print(sheet.cell_value(i, j))
+            fields.append(sheet.cell_value(i, j) + "\n")
+        note = genanki.Note(model, fields)
+        deck.add_note(note)
+        print()
+    genanki.Package(deck).write_to_file('output.apkg')
+    
 
 def main():
     my_deck = getDeck()
     my_model = getModel()
+    readWriteData(my_deck, my_model)
 
 main()
