@@ -69,7 +69,7 @@ def getStyling():
 
 # read data from spreadsheet
 def readWriteData(deck, model):
-    filename = "list_01.xls"
+    filename = input("Please enter a filename and extension: ")
     book = xlrd.open_workbook(filename)
     sheet = book.sheet_by_index(0)
     for i in range(sheet.nrows):
